@@ -1,6 +1,7 @@
 # KnapsackProblem
 # author: Kendall Brown
 
+import time
 from copy import copy
 
 def exhaustiveMethod(sackWeight, numberOfItems, items):
@@ -11,20 +12,25 @@ def exhaustiveMethod(sackWeight, numberOfItems, items):
     powerSet = generatePowerSet(items, tempSet, numberOfItems, powerSet)
 
     # examine power set for ideal value
-    ideal = 0
+    idealValue = 0
+    idealLoad = list()
+    currentLoad = list()
     for i in range(len(powerSet)):
         loadWeight = 0
         loadValue = 0
+        currentLoad = copy(powerSet[i])
         # calculate wieght and value of each set
-        for j in range(len(powerSet[i])):
-            loadWeight += powerSet[i][j][0]
-            loadValue += powerSet[i][j][1]
+        for j in range(len(currentLoad)):
+            loadWeight += currentLoad[j][0]
+            loadValue += currentLoad[j][1]
 
         # check that set is not overweight and compare for greatest value
         if loadWeight <= sackWeight:
-            ideal = max(ideal, loadValue)
+            if idealValue < loadValue:
+                idealValue = loadValue
+                idealLoad = copy(currentLoad)
 
-    return ideal
+    return idealLoad
 
 def heuristicMethod(sackWeight, items):
     #sort items in descending order
@@ -112,21 +118,36 @@ if __name__ == '__main__':
         itemsFromFile = inputFile.read()
 
     # create items variable using data for the first item
+    itemNumber = 1
     itemData = itemsFromFile.split()
     itemWeight = int(itemData[0])
     itemValue = int(itemData[1])
-    items = [(itemWeight, itemValue)]
+    items = [(itemWeight, itemValue, itemNumber)]
 
     # create rest of items variable
     for i in range(2, len(itemData) - 1, 2):
+        itemNumber += 1
         itemWeight = int(itemData[i])
         itemValue = int(itemData[i + 1])
-        items.append((itemWeight, itemValue))
+        items.append((itemWeight, itemValue, itemNumber))
 
     # run exhaustive method
     if method == "E":
-        print("\nThe greatest possible value is: ", end="")
-        print(exhaustiveMethod(sackWeight, numberOfItems, items))
+        value = 0
+        bestItems = list()
+        knapsack = list()
+        reverseKnapsack = exhaustiveMethod(sackWeight, numberOfItems, items)
+        for i in range(len(reverseKnapsack)):
+            knapsack.append(reverseKnapsack[(len(reverseKnapsack)-1) - i])
+
+        for i in range(len(knapsack)):
+            value += knapsack[i][1]
+
+        print("\n%d" % value)
+        for i in range(len(knapsack)-1):
+            print("%d " % knapsack[i][2], end='')
+        print("%d" % knapsack[len(knapsack)-1][2])
+
     # run heuristic method
     elif method == "H":
         print("\nThe best value is roughly: ", end="")
