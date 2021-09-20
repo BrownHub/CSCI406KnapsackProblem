@@ -3,6 +3,7 @@
 
 import time
 from copy import copy
+import numberGenerator
 
 def exhaustiveMethod(sackWeight, numberOfItems, items):
 
@@ -112,6 +113,27 @@ def generatePowerSet(items, tempSet, n, powerSet):
     return powerSet
 
 if __name__ == '__main__':
+    # ask to generate random data
+    generateData = input("Generate data? - ")
+    generateData = generateData.upper()
+
+    while generateData != "Y" and generateData != "N":
+        print("Try again")
+        generateData = input("Generate data?\n:")
+
+    if generateData == "Y":
+        dataSelection = input("(E)xhaustive or (H)euristic: ")
+        dataSelection = dataSelection.upper()
+
+        while dataSelection != 'E' and dataSelection != 'H':
+            print("Try again")
+            input("(E)xhaustive or (H)euristic: ")
+
+        if dataSelection == 'E':
+            numberGenerator.generateExhaustive()
+        elif dataSelection == 'H':
+            numberGenerator.generateHeuristic()
+
 
     # request method preference from user
     print("Choose a method:")
