@@ -2,8 +2,8 @@
 # author: Kendall Brown
 
 import time
+import random
 from copy import copy
-import numberGenerator
 
 def exhaustiveMethod(sackWeight, numberOfItems, items):
 
@@ -112,6 +112,19 @@ def generatePowerSet(items, tempSet, n, powerSet):
 
     return powerSet
 
+def randomGenerateData(n):
+    knapsackWeight = int(200 * random.random() + 100)
+    numItems = n
+
+    with open("GeneratedData.txt", "w") as exhaustiveFile:
+        exhaustiveFile.write("{}\n".format(knapsackWeight))
+        exhaustiveFile.write("{}\n".format(numItems))
+
+        for i in range(numItems):
+            weight = int(80 * random.random() + 1)
+            value = int(320 * random.random() + 30)
+            exhaustiveFile.write("{} {}\n".format(weight, value))
+
 if __name__ == '__main__':
     # ask to generate random data
     generateData = input("Generate data? - ")
@@ -122,17 +135,10 @@ if __name__ == '__main__':
         generateData = input("Generate data?\n:")
 
     if generateData == "Y":
-        dataSelection = input("(E)xhaustive or (H)euristic: ")
-        dataSelection = dataSelection.upper()
 
-        while dataSelection != 'E' and dataSelection != 'H':
-            print("Try again")
-            input("(E)xhaustive or (H)euristic: ")
+        itemsToGenerate = int(input("How many items would you like to generate? - "))
 
-        if dataSelection == 'E':
-            numberGenerator.generateExhaustive()
-        elif dataSelection == 'H':
-            numberGenerator.generateHeuristic()
+        randomGenerateData(itemsToGenerate)
 
 
     # request method preference from user
@@ -152,6 +158,8 @@ if __name__ == '__main__':
 
     # request data file from user
     filename = input("Enter a file name: ")
+
+    startTime = time.time()
 
     # read data from file
     with open(filename) as inputFile:
@@ -191,6 +199,10 @@ if __name__ == '__main__':
     for i in range(len(knapsack) - 1):
         print("%d " % knapsack[i][2], end='')
     print("%d" % knapsack[len(knapsack) - 1][2])
+
+    endTime = time.time()
+    runTime = endTime - startTime
+    print("\nRuntime: {}".format(runTime))
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
