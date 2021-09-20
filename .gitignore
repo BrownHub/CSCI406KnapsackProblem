@@ -1,1 +1,4 @@
 .idea
+__pycache__
+ExhaustiveData.txt
+HeuristicData.txt
