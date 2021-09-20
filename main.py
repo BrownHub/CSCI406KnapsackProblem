@@ -13,7 +13,7 @@ def exhaustiveMethod(sackWeight, numberOfItems, items):
 
     # examine power set for ideal value
     idealValue = 0
-    idealLoad = list()
+    reversedIdealLoad = list()
     currentLoad = list()
     for i in range(len(powerSet)):
         loadWeight = 0
@@ -28,7 +28,11 @@ def exhaustiveMethod(sackWeight, numberOfItems, items):
         if loadWeight <= sackWeight:
             if idealValue < loadValue:
                 idealValue = loadValue
-                idealLoad = copy(currentLoad)
+                reversedIdealLoad = copy(currentLoad)
+
+    idealLoad = list()
+    for i in range(len(reversedIdealLoad)):
+        idealLoad.append(reversedIdealLoad[(len(reversedIdealLoad) - 1) - i])
 
     return idealLoad
 
@@ -62,15 +66,31 @@ def heuristicMethod(sackWeight, items):
 
     #initialize values
     remainingWeight = sackWeight
-    value = 0
+    load = list()
 
     # add items until sack is full
     for i in range(len(items)):
         if remainingWeight - items[i][0] > 0:
             remainingWeight -= items[i][0]
-            value += items[i][1]
+            load.append(items[i])
 
-    return value
+    isSorted = False
+    while not isSorted:
+        isSorted = True
+
+        for i in range(len(load) - 1):
+            first = load[i]
+            second = load[i + 1]
+
+            # compare item numbers
+            if first[2] > second[2]:
+                # swap items and run sort again after pass
+                isSorted = False
+                tempItem = first
+                load[i] = second
+                load[i + 1] = tempItem
+
+    return load
 
 # referenced https://www.techiedelight.com/generate-power-set-given-set/
 def generatePowerSet(items, tempSet, n, powerSet):
@@ -133,25 +153,22 @@ if __name__ == '__main__':
 
     # run exhaustive method
     if method == "E":
-        value = 0
-        bestItems = list()
-        knapsack = list()
-        reverseKnapsack = exhaustiveMethod(sackWeight, numberOfItems, items)
-        for i in range(len(reverseKnapsack)):
-            knapsack.append(reverseKnapsack[(len(reverseKnapsack)-1) - i])
-
-        for i in range(len(knapsack)):
-            value += knapsack[i][1]
-
-        print("\n%d" % value)
-        for i in range(len(knapsack)-1):
-            print("%d " % knapsack[i][2], end='')
-        print("%d" % knapsack[len(knapsack)-1][2])
+        knapsack = exhaustiveMethod(sackWeight, numberOfItems, items)
 
     # run heuristic method
     elif method == "H":
-        print("\nThe best value is roughly: ", end="")
-        print(heuristicMethod(sackWeight, items))
+        knapsack = heuristicMethod(sackWeight, items)
+
+    # calculate total value
+    value = 0
+    for i in range(len(knapsack)):
+        value += knapsack[i][1]
+
+    # print value and item numbers
+    print("\n%d" % value)
+    for i in range(len(knapsack) - 1):
+        print("%d " % knapsack[i][2], end='')
+    print("%d" % knapsack[len(knapsack) - 1][2])
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
