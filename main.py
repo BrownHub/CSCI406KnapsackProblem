@@ -26,9 +26,49 @@ def exhaustiveMethod(sackWeight, numberOfItems, items):
 
     return ideal
 
+def heuristicMethod(sackWeight, items):
+    #sort items in descending order
+    isSorted = False
+    while not isSorted:
+        isSorted = True
+
+        for i in range(len(items)-1):
+            first = items[i]
+            second = items[i+1]
+            firstRatio = first[1] / first[0]
+            secondRatio = second[1] / second[0]
+
+            # compare value to weight ratio of items
+            if firstRatio < secondRatio:
+                # swap items and run sort again after pass
+                isSorted = False
+                tempItem = first
+                items[i] = second
+                items[i+1] = tempItem
+            elif firstRatio == secondRatio:
+                # compare value of items
+                if first[1] < second[1]:
+                    # swap items and run sort again after pass
+                    isSorted = False
+                    tempItem = first
+                    items[i] = second
+                    items[i + 1] = tempItem
+
+    #initialize values
+    remainingWeight = sackWeight
+    value = 0
+
+    # add items until sack is full
+    for i in range(len(items)):
+        if remainingWeight - items[i][0] > 0:
+            remainingWeight -= items[i][0]
+            value += items[i][1]
+
+    return value
+
 # referenced https://www.techiedelight.com/generate-power-set-given-set/
 def generatePowerSet(items, tempSet, n, powerSet):
-    
+
     # add to power set if all items have been considered
     if n == 0:
         setToAdd = copy(tempSet)
@@ -87,6 +127,10 @@ if __name__ == '__main__':
     if method == "E":
         print("\nThe greatest possible value is: ", end="")
         print(exhaustiveMethod(sackWeight, numberOfItems, items))
+    # run heuristic method
+    elif method == "H":
+        print("\nThe best value is roughly: ", end="")
+        print(heuristicMethod(sackWeight, items))
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
